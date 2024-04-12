@@ -12,7 +12,6 @@ def generate_short_url(url: str):
     short_url = re.sub(r'[^a-zA-Z0-9]', '', short_url)
     
     
-    
     if "https://" in url:
         short_url = "https://" + short_url + ".com"
     else:
