@@ -11,7 +11,7 @@ def index():
     return {"message": "Hello World"}
 
 
-@app.post("/generate_url")
+@app.post("/generate-url")
 def url_input(url: UrlValidator):
     url = generate_short_url(str(url))
     return {"short_url": url}

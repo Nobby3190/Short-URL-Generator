@@ -1,0 +1,21 @@
+[project]
+name = "short-url-generator"
+version = "0.1.0"
+description = "Project for generating short url"
+readme = "README.md"
+requires-python = ">=3.10.8"
+
+[tool.black]
+line-length = 88
+
+[tool.ruff]
+exclude = [
+    "__pycache__",
+    ".git",
+    ".tox",
+    ".venv",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+]
