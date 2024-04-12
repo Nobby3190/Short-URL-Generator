@@ -33,8 +33,3 @@ class DB:
                 cursor.close()
                 self.p.close()
                 print("PostgreSQL connection closed")
-
-
-if __name__ == "__main__":
-    db = DB()
-    db.query_table()
