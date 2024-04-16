@@ -1,5 +1,5 @@
-import redis
 import psycopg2
+import redis
 import redis.exceptions
 
 
@@ -33,3 +33,36 @@ class DB:
                 cursor.close()
                 self.p.close()
                 print("PostgreSQL connection closed")
+
+    def select_postgres_tables(self):
+        cursor = self.p.cursor()
+        with self.p:
+            with cursor:
+                cursor.execute(
+                    "SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' AND schemaname != 'information_schema'"
+                )
+                rows = cursor.fetchall()
+                table_names = [row[0] for row in rows]
+
+                # 打印所有表名
+                for table_name in table_names:
+                    print(table_name)
+
+
+#     def select_postgres_table(self):
+#         cursor = self.p.cursor()
+#         with self.p:
+#             with cursor:
+#                 cursor.execute("SELECT * FROM short_urls;")
+#                 result = cursor.fetchall()
+#                 print(result)
+
+
+#     def get_redis_value(self):
+#         retrieved_url = self.r.get("https://MDZjNjA0MzY.com")
+#         print("Retrieved URL:", retrieved_url)
+
+
+# if __name__ == "__main__":
+#     db = DB()
+#     db.get_redis_value()
