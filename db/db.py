@@ -34,52 +34,53 @@ class DB:
                 self.p.close()
                 print("PostgreSQL connection closed")
 
-    def select_postgres_tables(self):
-        cursor = self.p.cursor()
-        with self.p:
-            with cursor:
-                cursor.execute(
-                    "SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' AND schemaname != 'information_schema'"
-                )
-                rows = cursor.fetchall()
-                table_names = [row[0] for row in rows]
 
-                # 打印所有表名
-                for table_name in table_names:
-                    print(table_name)
+#     def select_postgres_tables(self):
+#         cursor = self.p.cursor()
+#         with self.p:
+#             with cursor:
+#                 cursor.execute(
+#                     "SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' AND schemaname != 'information_schema'"
+#                 )
+#                 rows = cursor.fetchall()
+#                 table_names = [row[0] for row in rows]
 
-    def select_postgres_table(self):
-        cursor = self.p.cursor()
-        with self.p:
-            with cursor:
-                cursor.execute(
-                    "SELECT url FROM short_urls WHERE hashed_url = %s;",
-                    ("https://ZDBlMTk2YTA.com",),
-                )
-                result = cursor.fetchone()
-                print(result[0])
+#                 # 打印所有表名
+#                 for table_name in table_names:
+#                     print(table_name)
 
-    def get_redis_value(self, hashed_url):
-        if self.r.exists(hashed_url):
-            retrieved_url = self.r.get(hashed_url)
-            r = retrieved_url.decode("utf-8")
-            print(r)
+#     def select_postgres_table(self):
+#         cursor = self.p.cursor()
+#         with self.p:
+#             with cursor:
+#                 cursor.execute(
+#                     "SELECT url FROM short_urls WHERE hashed_url = %s;",
+#                     ("https://ZDBlMTk2YTA.com",),
+#                 )
+#                 result = cursor.fetchone()
+#                 print(result[0])
 
-    def delete_redis_db_data(self):
-        self.r.flushdb()
-        print("ok")
+#     def get_redis_value(self, hashed_url):
+#         if self.r.exists(hashed_url):
+#             retrieved_url = self.r.get(hashed_url)
+#             r = retrieved_url.decode("utf-8")
+#             print(r)
 
-    def delete_postgresql_table_data(self):
-        query = "DELETE FROM short_urls"
-        with self.p as postgres:
-            with postgres.cursor() as cursor:
-                cursor.execute(query)
-                postgres.commit()
-        print("ok")
+#     def delete_redis_db_data(self):
+#         self.r.flushdb()
+#         print("ok")
+
+#     def delete_postgresql_table_data(self):
+#         query = "DELETE FROM short_urls"
+#         with self.p as postgres:
+#             with postgres.cursor() as cursor:
+#                 cursor.execute(query)
+#                 postgres.commit()
+#         print("ok")
 
 
-if __name__ == "__main__":
-    db = DB()
-    # db.select_postgres_table()
-    # db.get_redis_value("https://ZDBlMTk2YTA.com")
-    db.delete_postgresql_table_data()
+# if __name__ == "__main__":
+#     db = DB()
+#     db.select_postgres_table()
+#     db.get_redis_value("https://ZDBlMTk2YTA.com")
+#     db.delete_postgresql_table_data()
