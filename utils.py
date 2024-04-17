@@ -5,7 +5,7 @@ import re
 from db.db import DB
 
 
-def generate_short_url(url: str) -> str:
+def hash_url(url: str) -> str:
     hash_object = hashlib.sha256(url.encode())
     hash_hex = hash_object.hexdigest()
 
@@ -17,21 +17,42 @@ def generate_short_url(url: str) -> str:
         hashed_url = "https://" + hashed + ".com"
     elif "http://" in url:
         hashed_url = "http://" + hashed + ".com"
-
-    data = {"url": url, "hashed_url": hashed_url}
-
     # store in postgresql
     db = DB()
     postgres = db.p
-    cursor = postgres.cursor()
-    query = """INSERT INTO short_urls (url, hashed_url) VALUES (%s, %s)"""
     with postgres:
-        with cursor:
-            cursor.execute(query, (url, hashed_url))
+        with postgres.cursor():
+            postgres.cursor().execute(
+                "INSERT INTO short_urls (url, hashed_url) VALUES (%s, %s)",
+                (url, hashed_url),
+            )
             db.p.commit()
 
     # store in redis
     redis = db.r
-    redis.set(data["hashed_url"], data["url"])
+    redis.set(hashed_url, url)
 
     return hashed_url
+
+
+def retrieve_url_by_hashed_url(hashed_url: str) -> str | None:
+    db = DB()
+    redis = db.r
+    postgres = db.p
+    if redis.exists(hashed_url):
+        url = redis.get(hashed_url)
+        url = url.decode("utf-8")
+        return url
+    else:
+        with postgres:
+            with postgres.cursor() as cursor:
+                cursor.execute(
+                    "SELECT url FROM short_urls WHERE hashed_url = %s;", (hashed_url,)
+                )
+                url_row = cursor.fetchone()
+                if url_row:
+                    url = url_row[0]
+                    redis.set(hashed_url, url)
+                    return url
+                else:
+                    return None

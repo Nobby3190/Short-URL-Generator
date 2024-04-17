@@ -1,5 +1,5 @@
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel
 
 
 class UrlValidator(BaseModel):
-    input_url: HttpUrl
+    input_url: str

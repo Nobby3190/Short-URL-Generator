@@ -48,21 +48,38 @@ class DB:
                 for table_name in table_names:
                     print(table_name)
 
+    def select_postgres_table(self):
+        cursor = self.p.cursor()
+        with self.p:
+            with cursor:
+                cursor.execute(
+                    "SELECT url FROM short_urls WHERE hashed_url = %s;",
+                    ("https://ZDBlMTk2YTA.com",),
+                )
+                result = cursor.fetchone()
+                print(result[0])
 
-#     def select_postgres_table(self):
-#         cursor = self.p.cursor()
-#         with self.p:
-#             with cursor:
-#                 cursor.execute("SELECT * FROM short_urls;")
-#                 result = cursor.fetchall()
-#                 print(result)
+    def get_redis_value(self, hashed_url):
+        if self.r.exists(hashed_url):
+            retrieved_url = self.r.get(hashed_url)
+            r = retrieved_url.decode("utf-8")
+            print(r)
+
+    def delete_redis_db_data(self):
+        self.r.flushdb()
+        print("ok")
+
+    def delete_postgresql_table_data(self):
+        query = "DELETE FROM short_urls"
+        with self.p as postgres:
+            with postgres.cursor() as cursor:
+                cursor.execute(query)
+                postgres.commit()
+        print("ok")
 
 
-#     def get_redis_value(self):
-#         retrieved_url = self.r.get("https://MDZjNjA0MzY.com")
-#         print("Retrieved URL:", retrieved_url)
-
-
-# if __name__ == "__main__":
-#     db = DB()
-#     db.get_redis_value()
+if __name__ == "__main__":
+    db = DB()
+    # db.select_postgres_table()
+    # db.get_redis_value("https://ZDBlMTk2YTA.com")
+    db.delete_postgresql_table_data()
