@@ -14,7 +14,7 @@ async def index():
 
 @app.post("/get-url")
 async def retrieve_url(request: Request, hashed_url: UrlValidator) -> RedirectResponse:
-    input_url = hashed_url.url
+    input_url = hashed_url.input_url
     url = retrieve_url_by_hashed_url(str(input_url))
     response = RedirectResponse(url=url, status_code=status.HTTP_307_TEMPORARY_REDIRECT)
     return response
@@ -22,7 +22,7 @@ async def retrieve_url(request: Request, hashed_url: UrlValidator) -> RedirectRe
 
 @app.post("/generate-url")
 async def generate_hashed_url(url: UrlValidator) -> JSONResponse:
-    input_url = url.url
+    input_url = url.input_url
     hashed_url = hash_url(str(input_url))
     response = JSONResponse(content={"hashed_url": hashed_url})
     return response

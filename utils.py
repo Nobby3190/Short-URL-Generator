@@ -7,15 +7,15 @@ from db.models import UrlModel
 
 
 def hash_url(url: UrlModel) -> str:
-    hash_object = hashlib.sha256(url.encode())
+    hash_object = hashlib.sha256(url.url.encode())
     hash_hex = hash_object.hexdigest()
     short_code = hash_hex[:8]
     hashed = base64.urlsafe_b64encode(short_code.encode()).decode()
     hashed = re.sub(r"[^a-zA-Z0-9]", "", hashed)
 
-    if "https://" in url.input_url:
+    if "https://" in url.url:
         hashed_url = "https://" + hashed + ".com"
-    elif "http://" in url.input_url:
+    elif "http://" in url.url:
         hashed_url = "http://" + hashed + ".com"
 
     # store in postgresql
