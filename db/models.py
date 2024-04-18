@@ -2,5 +2,5 @@ from pydantic import BaseModel
 
 
 class UrlModel(BaseModel):
-    url: str
+    input_url: str
     hashed_url: str
