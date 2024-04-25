@@ -34,31 +34,40 @@ class DB:
                 self.p.close()
                 print("PostgreSQL connection closed")
 
+    #     def select_postgres_tables(self):
+    #         cursor = self.p.cursor()
+    #         with self.p:
+    #             with cursor:
+    #                 cursor.execute(
+    #                     "SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' AND schemaname != 'information_schema'"
+    #                 )
+    #                 rows = cursor.fetchall()
+    #                 table_names = [row[0] for row in rows]
 
-#     def select_postgres_tables(self):
-#         cursor = self.p.cursor()
-#         with self.p:
-#             with cursor:
-#                 cursor.execute(
-#                     "SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' AND schemaname != 'information_schema'"
-#                 )
-#                 rows = cursor.fetchall()
-#                 table_names = [row[0] for row in rows]
+    #                 # 打印所有表名
+    #                 for table_name in table_names:
+    #                     print(table_name)
 
-#                 # 打印所有表名
-#                 for table_name in table_names:
-#                     print(table_name)
+    # def select_postgres_table(self):
+    #     cursor = self.p.cursor()
+    #     with self.p:
+    #         with cursor:
+    #             cursor.execute(
+    #                 "SELECT url FROM short_urls WHERE hashed_url = %s;",
+    #                 ("https://ZDBlMTk2YTA.com",),
+    #             )
+    #             result = cursor.fetchone()
+    #             print(result[0])
 
-#     def select_postgres_table(self):
-#         cursor = self.p.cursor()
-#         with self.p:
-#             with cursor:
-#                 cursor.execute(
-#                     "SELECT url FROM short_urls WHERE hashed_url = %s;",
-#                     ("https://ZDBlMTk2YTA.com",),
-#                 )
-#                 result = cursor.fetchone()
-#                 print(result[0])
+    def select_postgres_table(self):
+        cursor = self.p.cursor()
+        with self.p:
+            with cursor:
+                cursor.execute("SELECT * FROM short_urls;")
+                result = cursor.fetchall()
+                for row in result:
+                    print(row)
+
 
 #     def get_redis_value(self, hashed_url):
 #         if self.r.exists(hashed_url):
@@ -79,8 +88,8 @@ class DB:
 #         print("ok")
 
 
-# if __name__ == "__main__":
-#     db = DB()
-#     db.select_postgres_table()
+if __name__ == "__main__":
+    db = DB()
+    db.select_postgres_table()
 #     db.get_redis_value("https://ZDBlMTk2YTA.com")
 #     db.delete_postgresql_table_data()
