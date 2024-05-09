@@ -30,7 +30,7 @@ def hash_url(url: UrlModel) -> str:
 
     if "https://" in url:
         hashed_url = "https://" + hashed + ".com"
-    elif "http://" in url.url:
+    elif "http://" in url:
         hashed_url = "http://" + hashed + ".com"
 
     db = DB()

@@ -6,16 +6,26 @@ import redis.exceptions
 class DB:
     def __init__(self) -> None:
         self.r = redis.Redis(
-            host="localhost", port=6379, username="default", password="123456", db=0
+            host="redis", port=6379, username="default", password="123456", db=0
         )
         self.p = psycopg2.connect(
-            dbname="url",
-            host="localhost",
+            dbname="urls",
+            host="postgres",
             port=5432,
             user="nobby",
             password="nobby",
             sslmode="allow",
         )
+
+        with self.p:
+            with self.p.cursor() as cursor:
+                cursor.execute("""
+                        CREATE TABLE IF NOT EXISTS short_urls (
+                            url TEXT NOT NULL,
+                            hashed_url TEXT UNIQUE NOT NULL
+                        );
+                        """)
+            self.p.commit()
 
     def check_redis_connect(self) -> None:
         try:
@@ -33,6 +43,20 @@ class DB:
                 cursor.close()
                 self.p.close()
                 print("PostgreSQL connection closed")
+
+    def create_table(self):
+        cursor = self.p.cursor()
+        with self.p:
+            with cursor:
+                query = """
+                    CREATE TABLE IF NOT EXISTS short_urls (
+                        url TEXT NOT NULL,
+                        hashed_url TEXT UNIQUE NOT NULL
+                    );
+                    """
+
+                cursor.execute(query=query)
+                self.p.commit()
 
     #     def select_postgres_tables(self):
     #         cursor = self.p.cursor()
@@ -68,28 +92,20 @@ class DB:
                 for row in result:
                     print(row)
 
+    #     def get_redis_value(self, hashed_url):
+    #         if self.r.exists(hashed_url):
+    #             retrieved_url = self.r.get(hashed_url)
+    #             r = retrieved_url.decode("utf-8")
+    #             print(r)
 
-#     def get_redis_value(self, hashed_url):
-#         if self.r.exists(hashed_url):
-#             retrieved_url = self.r.get(hashed_url)
-#             r = retrieved_url.decode("utf-8")
-#             print(r)
+    #     def delete_redis_db_data(self):
+    #         self.r.flushdb()
+    #         print("ok")
 
-#     def delete_redis_db_data(self):
-#         self.r.flushdb()
-#         print("ok")
-
-#     def delete_postgresql_table_data(self):
-#         query = "DELETE FROM short_urls"
-#         with self.p as postgres:
-#             with postgres.cursor() as cursor:
-#                 cursor.execute(query)
-#                 postgres.commit()
-#         print("ok")
-
-
-if __name__ == "__main__":
-    db = DB()
-    db.select_postgres_table()
-#     db.get_redis_value("https://ZDBlMTk2YTA.com")
-#     db.delete_postgresql_table_data()
+    def delete_postgresql_table_data(self):
+        query = "DELETE FROM short_urls"
+        with self.p as postgres:
+            with postgres.cursor() as cursor:
+                cursor.execute(query)
+                postgres.commit()
+        print("ok")

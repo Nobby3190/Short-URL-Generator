@@ -4,8 +4,8 @@ services:
     build: .
     ports:
       - 8000:8000
-  #   networks:
-  #     - app-network
+    networks:
+      - app-network
 
   nginx:
     image: nginx:latest
@@ -17,8 +17,8 @@ services:
     depends_on:
       - app
     restart: always
-    # networks:
-    #   - app-network
+    networks:
+      - app-network
 
 
   postgres:
@@ -38,8 +38,8 @@ services:
     depends_on:
       - app
     restart: always
-    # networks:
-    #   - app-network
+    networks:
+      - app-network
 
 
   redis:
@@ -56,9 +56,9 @@ services:
     depends_on:
       - app
     restart: always
-#     networks:
-#       - app-network
+    networks:
+      - app-network
 
-# networks:
-#     app-network:
-#       driver: bridge
+networks:
+    app-network:
+      driver: bridge

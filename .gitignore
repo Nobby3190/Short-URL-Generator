@@ -50,16 +50,6 @@ coverage.xml
 cover/
 
 
-# Django stuff:
-*.log
-local_settings.py
-db.sqlite3
-db.sqlite3-journal
-
-# Flask stuff:
-instance/
-.webassets-cache
-
 
 # PEP 582; used by e.g. github.com/David-OConnor/pyflow and github.com/pdm-project/pdm
 __pypackages__/
@@ -72,6 +62,7 @@ celerybeat.pid
 # Environments
 .env
 .venv
+.vscode
 .python-version
 env/
 venv/
