@@ -35,7 +35,7 @@ class TestAPP:
         return TestClient(app)
 
     def test_index(self, client):
-        response = client.get("/")
+        response = client.get("/index")
         assert response.status_code == 200
         assert response.json() == {"message": "Hello World"}
 

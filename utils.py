@@ -1,9 +1,13 @@
 import base64
 import hashlib
 import re
+import threading
 
 from db.db import DB
 from db.models import UrlModel
+
+
+lock = threading.Lock()
 
 
 def hash_url(url: UrlModel) -> str:
@@ -60,6 +64,7 @@ def retrieve_url_by_hashed_url(hashed_url: UrlModel) -> str | None:
     Returns:
         str | None: Original URL or None
     """
+
     db = DB()
     redis = db.r
     postgres = db.p
@@ -68,16 +73,17 @@ def retrieve_url_by_hashed_url(hashed_url: UrlModel) -> str | None:
         url = url.decode("utf-8")
         return url
     else:
-        with postgres:
-            with postgres.cursor() as cursor:
-                cursor.execute(
-                    "SELECT url FROM short_urls WHERE hashed_url = %s;",
-                    (hashed_url,),
-                )
-                url_row = cursor.fetchone()
-                if url_row:
-                    url = url_row[0]
-                    redis.set(hashed_url, url)
-                    return url
-                else:
-                    return None
+        with lock:
+            with postgres:
+                with postgres.cursor() as cursor:
+                    cursor.execute(
+                        "SELECT url FROM short_urls WHERE hashed_url = %s;",
+                        (hashed_url,),
+                    )
+                    url_row = cursor.fetchone()
+                    if url_row:
+                        url = url_row[0]
+                        redis.set(hashed_url, url)
+                        return url
+                    else:
+                        return None
