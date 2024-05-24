@@ -1,15 +1,14 @@
-import uvicorn
 from db.schemas import UrlValidator
-from fastapi import FastAPI, status, Form
-from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi import FastAPI, status, HTTPException
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
-from utils import hash_url, retrieve_url_by_hashed_url
+from utils import hashing_original_url, retrieve_url_by_hashed_url
 
 app = FastAPI(
     title="Short URL Generator",
     version="0.0.1",
-    docs_url="/api/docs",
+    docs_url="/urls/api/docs",
     description="A Small Function For Generate Short URL.",
 )
 
@@ -25,26 +24,33 @@ app.add_middleware(
 )
 
 
-@app.get("/index", tags=["index"])
-async def index():
+@app.get("/urls", tags=["Default"])
+async def index() -> JSONResponse:
     return {"message": "Hello World"}
 
 
-@app.post("/retrieve-original-url", tags=["Original URL"])
-async def retrieve_url(hashed_url: str = Form(...)) -> RedirectResponse:
-    input_url = hashed_url
-    url = retrieve_url_by_hashed_url(str(input_url))
-    response = RedirectResponse(url=url, status_code=status.HTTP_303_SEE_OTHER)
+@app.get("/urls/{hashed_url}", tags=["URL"])
+async def original_url(hashed_url: str) -> JSONResponse:
+    url = retrieve_url_by_hashed_url(hashed_url)
+    if not url:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="URL is not found"
+        )
+    elif url == "Invalid":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid hashed url format"
+        )
+    response = JSONResponse(content={"url": url})
     return response
 
 
-@app.post("/generate-short-url", tags=["Hashed URL"])
-async def generate_url(url: UrlValidator) -> JSONResponse:
+@app.post("/urls/generate", tags=["URL"])
+async def hash_url(url: UrlValidator) -> JSONResponse:
     input_url = url.input_url
-    hashed_url = hash_url(str(input_url))
+    hashed_url = hashing_original_url(input_url)
+    if not hashed_url:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid URL format"
+        )
     response = JSONResponse(content={"hashed_url": hashed_url})
     return response
-
-
-if __name__ == "__main__":
-    uvicorn.run(app="app:app", host="0.0.0.0", port=8000, reload=True)

@@ -9,7 +9,7 @@ class DB:
             host="redis", port=6379, username="default", password="123456", db=0
         )
         self.p = psycopg2.connect(
-            dbname="urls",
+            dbname="postgres",
             host="postgres",
             port=5432,
             user="nobby",
