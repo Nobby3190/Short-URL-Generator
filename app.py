@@ -24,11 +24,6 @@ app.add_middleware(
 )
 
 
-@app.get("/urls", tags=["Default"])
-async def index() -> JSONResponse:
-    return {"message": "Hello World"}
-
-
 @app.get("/urls/{hashed_url}", tags=["URL"])
 async def original_url(hashed_url: str) -> JSONResponse:
     url = retrieve_url_by_hashed_url(hashed_url)
