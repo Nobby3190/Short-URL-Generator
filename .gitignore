@@ -74,6 +74,6 @@ env.bak/
 venv.bak/
 *TODO
 
-# db
 
+# db
 db/db_data/*
