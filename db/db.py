@@ -21,8 +21,8 @@ class DB:
             with self.p.cursor() as cursor:
                 cursor.execute("""
                         CREATE TABLE IF NOT EXISTS short_urls (
-                            url TEXT NOT NULL,
-                            hashed_url TEXT UNIQUE NOT NULL
+                            url VARCHAR(155) NOT NULL,
+                            hashed_url VARCHAR(50) UNIQUE NOT NULL
                         );
                         """)
             self.p.commit()
