@@ -81,11 +81,6 @@ def hashing_original_url(url: UrlModel) -> str | None:
     hashed = base64.urlsafe_b64encode(short_code.encode()).decode()
     hashed_url = re.sub(r"[^a-zA-Z0-9]", "", hashed)
 
-    # if "https://" in url:
-    #     hashed_url = "https://" + hashed + ".com"
-    # elif "http://" in url:
-    #     hashed_url = "http://" + hashed + ".com"
-
     db = DB()
     redis = db.r
 

@@ -24,9 +24,6 @@ app.add_middleware(
 )
 
 
-fake_url = ""
-
-
 @app.get("/url", tags=["Default"])
 async def index() -> JSONResponse:
     return {"message": "Hello, this is url shorten application!"}
